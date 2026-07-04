@@ -84,12 +84,7 @@ export default function Sidebar({ chats, activeChatId, onNewChat }) {
       {/* Logo */}
       <div className="px-5 pt-5 pb-4 border-b border-zinc-800 shrink-0">
         <div className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-zinc-200 to-zinc-400 flex items-center justify-center shrink-0">
-            <MessageSquare size={15} className="text-zinc-900" />
-          </div>
-          <span className="text-sm font-bold text-zinc-50 tracking-tight">
-            Persona AI
-          </span>
+          <img src="/white_logo.png" alt="Persona AI Logo" className="h-11 w-auto object-contain" />
         </div>
       </div>
 
@@ -203,9 +198,13 @@ export default function Sidebar({ chats, activeChatId, onNewChat }) {
           appearance={{
             elements: {
               avatarBox: "h-8 w-8",
-              userButtonPopoverCard: "bg-zinc-900 border border-zinc-800",
-              userButtonPopoverActionButton: "text-zinc-300 hover:bg-zinc-800",
-              userButtonPopoverActionButtonText: "text-zinc-300",
+              userButtonPopoverCard: "bg-black border border-zinc-850 shadow-2xl",
+              userButtonPopoverActionButton: "text-orange-500 hover:bg-zinc-900",
+              userButtonPopoverActionButtonText: "text-orange-500 font-semibold",
+              userButtonPopoverActionButtonIcon: "text-orange-500",
+              userPreviewMainIdentifier: "text-orange-500 font-bold",
+              userPreviewSecondaryIdentifier: "text-orange-600/80 font-medium",
+              userButtonPopoverDivider: "bg-zinc-800",
               userButtonPopoverFooter: "hidden",
             },
           }}

@@ -73,7 +73,7 @@ export default function ChatLayout({
           >
             {sidebarOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
-          <span className="text-sm font-bold text-zinc-50">Persona AI</span>
+          <img src="/white_logo.png" alt="Persona AI Logo" className="h-8 w-auto object-contain" />
           <div className="w-8" />
         </div>
 
