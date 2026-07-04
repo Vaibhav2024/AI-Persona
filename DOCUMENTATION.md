@@ -1,5 +1,7 @@
 # Persona AI — Documentation
 
+**Live Project Deployment**: [chai-persona.vercel.app](https://chai-persona.vercel.app/)
+
 This document explains how the Hitesh Choudhary and Piyush Garg personas were built, how the prompting and context management strategy works, and includes sample conversations demonstrating both personas in action.
 
 ---

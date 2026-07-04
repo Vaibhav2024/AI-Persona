@@ -1,5 +1,7 @@
 # AI Persona Chat
 
+**Live Project Deployment**: [chai-persona.vercel.app](https://chai-persona.vercel.app/)
+
 An interactive Next.js web application that lets you chat with AI-powered personas of popular tech educators, Hitesh Choudhary and Piyush Garg. The AI models are fine-tuned via custom system prompts and few-shot examples to accurately mimic their teaching styles, humor, and technical philosophies.
 
 Now featuring Clerk authentication, multi-chat session history stored in Upstash Redis, a "Normal / Sarcastic" tone toggle, and optimized token usage.
