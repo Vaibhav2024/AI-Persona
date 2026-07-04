@@ -9,6 +9,7 @@
     "lint": "node node_modules/next/dist/bin/next lint"
   },
   "dependencies": {
+    "@clerk/nextjs": "^5.7.6",
     "@upstash/ratelimit": "^1.0.0",
     "@upstash/redis": "^1.28.0",
     "jsonwebtoken": "^9.0.2",
