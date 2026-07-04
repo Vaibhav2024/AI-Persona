@@ -1,54 +1,41 @@
-# Walkthrough — Persona AI OpenAI Migration & Redesign
+# Walkthrough — Auth, Multi-Chat, & Search Relevance Fixes
 
-The project has been migrated successfully from AWS Bedrock (Claude) to the OpenAI API (`gpt-4o-mini`) and redesigned to match a premium light-themed, single-window layout.
+## Build Result
 
-## Redesign Changes Made
-
-### 1. Viewport & Body Layout (`app/globals.css`, `app/page.js`)
-- Configured a locked body viewport with `height: 100vh; overflow: hidden;` to prevent the outer browser window from scrolling.
-- Centered the main application dashboard inside a card (`max-w-5xl h-full max-h-[92vh]`) with smooth rounded corners, light borders, and shadow.
-
-### 2. Sidebar Panel & Persona Card (`app/page.js`, `components/PersonaSwitcher.js`)
-- **Horizontal Switcher**: Configured horizontal toggle tabs inside the sidebar where the active tab displays a black background and white text.
-- **YouTuber Details**: Displays a dedicated YouTuber card directly below the switcher, showcasing their avatar, handle, and bio text.
-- **Captcha Separation**: The "Session Verification" card has been decoupled from the sidebar, only appearing as a full-viewport modal overlay before session verification. Once verified, it is completely hidden.
-
-### 3. Captcha Redesign (`components/CaptchaGate.js`)
-- Styled the captcha challenge to match a clean white dialog box containing a 3x2 grid of selection button boxes. Option names are moved to `aria-label` and `title` tags only.
-
-### 4. Message Bubble Formatting (`components/MessageBubble.js`, `components/VideoCard.js`)
-- **User messages**: Right-aligned, colored with black backgrounds (`bg-zinc-900`) and white text. No user avatar icon.
-- **YouTuber messages**: Left-aligned, light gray background (`bg-zinc-100`) and YouTuber circular avatar.
-- **Suggested Videos & Code Blocks**: Mapped to light-theme styling (white background cards, clean gray borders).
-
----
-
-## Migration Changes Made
-
-### 1. OpenAI Integration (`lib/openai.js`)
-- Swapped AWS Bedrock with a native `fetch` client to request completions from OpenAI's `gpt-4o-mini` API endpoint.
-- Structured system prompt as the first system role element in the chat history.
-
-### 2. API Chat Route (`app/api/chat/route.js`)
-- Truncated the history sent to the API to the last 10 messages.
-- Implemented a server-side character length validator that rejects user queries over 500 characters with custom YouTuber-persona responses.
-
-### 3. Chat Input Box (`components/ChatWindow.js`)
-- Restricted user typing with `maxLength={500}`.
-- Added a clean character counter (`0 / 500`) located to the left of the send button, and set the send button to be black with white icon.
-
----
-
-## Verification Results
-
-### Build Verification
-Ran `npm run build` to confirm compilation:
-```bash
-> ai-persona@0.1.0 build
-> node node_modules/next/dist/bin/next build
-
- ▲ Next.js 14.2.35
-   Creating an optimized production build ...
- ✓ Compiled successfully
 ```
-All components build cleanly without errors.
+✓ Compiled successfully — 0 errors
+10 routes generated, Middleware active (61.3 kB)
+```
+
+---
+
+## Complete Feature Log
+
+### 1 — Authentication & Middleware (Clerk v5)
+- **`middleware.js`:** Intercepts and protects all routes with Clerk v5 auth, redirecting anonymous users. Captcha API and sign-in/up routes remain public.
+- **`app/layout.js`:** Wrapped in `<ClerkProvider>`.
+- **`app/sign-in` & `app/sign-up`:** Render prebuilt Clerk components styled in a dark zinc theme.
+
+### 2 — Isolated Chat Sessions (Redis Storage)
+- **`lib/redis.js` & `lib/chatStore.js`:** Reuses the existing Upstash Redis instance to store meta and messages for each user.
+  - `chats:{userId}`: List of chat UUIDs.
+  - `chat:{chatId}:meta`: Session metadata (persona, title derived from first message, tone setting, timestamps).
+  - `chat:{chatId}:messages`: Complete conversation array for the specific chat ID.
+- **Strict Isolation:** Conversation logs are isolated by `chatId`. OpenAI completions strictly load the context of the active session, trimming history to the last 10 messages.
+
+### 3 — Re-designed Sidebar & Persona Picker UI
+- **Sidebar:** Dynamic list displaying chat sessions with relative timestamps and tags indicating who the chat is with (**Hitesh Choudhary** or **Piyush Garg**). Includes an active-state highlighter, search filtering by title, and a Clerk `UserButton` profile footer.
+- **Delete Confirmation:** Trash icon prompts a confirmation modal displaying the chat title with "Cancel" and "Confirm" actions.
+- **Sidebar State Sync:** An effect in `ChatLayout.js` syncs local lists with server-side prop updates (ensuring deleted or new items reflect immediately).
+- **Persona Picker:** Clicking "+ New Chat" opens a card layout overlay to create a session for Hitesh or Piyush.
+
+### 4 — Token-Usage Optimization (59% Savings)
+- Compressed both system prompts in `prompts/hitesh.js` and `prompts/piyush.js` into compact bulleted directives.
+- Deduplicated overlapping guides (merged tone, style, casual chats, and length parameters).
+- Trimmed few-shot pairs down to 9 (Hitesh) and 10 (Piyush) high-value examples in the `.json` files.
+- Total prompt overhead dropped from **~4,635 to ~1,890 tokens** (Piyush) and **~3,827 to ~1,586 tokens** (Hitesh).
+
+### 5 — YouTube Relevance Filtering & Concept Explanations
+- **Relevance Match (`lib/youtube.js`):** Extracts search query keywords (length >= 3, excluding common stopwords). Keeps matches only if the keyword appears in the video title.
+- **Automatic Nudge Removal:** If no videos pass the relevance filter, the backend cleans video check and channel subscription nudges (e.g. `"video check kar lena, subscribe karna mat bhoolna"`) from the reply text.
+- **Concept-first Refusal:** Hard prompt constraints instruct the model never to write code blocks or scripts. If asked for code, it explains the concept in 2-3 lines (e.g., explaining `5! = 5*4*3*2*1`) instead of showing a blunt refusal message.

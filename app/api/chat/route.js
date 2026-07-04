@@ -134,6 +134,15 @@ export async function POST(req) {
       const query = searchMatch[1];
       reply = reply.replace(searchMatch[0], "").trim();
       videos = await searchPersonaVideos(query, persona);
+
+      if (videos.length === 0) {
+        reply = reply
+          .replace(/(?:video\s+(?:dekh|check)\s+kar\s+lena\s*,?\s*(?:aur\s+)?(?:channel\s+ko\s+)?subscribe\s+karna\s+mat\s+bhoolna[.!]?)/gi, "")
+          .replace(/(?:video\s+(?:dekh|check)\s+kar\s+lena[.!]?)/gi, "")
+          .replace(/(?:channel\s+ko\s+)?subscribe\s+karna\s+mat\s+bhoolna[.!]?/gi, "")
+          .replace(/,\s*$/g, "")
+          .trim();
+      }
     }
 
     // 14. Persist both messages to Redis (scoped to this chatId only)

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "./Sidebar";
 import ChatWindow from "./ChatWindow";
@@ -17,6 +17,11 @@ export default function ChatLayout({
   const [showModal, setShowModal] = useState(!activeChatId);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [chatList, setChatList] = useState(chats);
+
+  // Sync state with server-side chats prop when it changes (e.g. after deletion/navigation)
+  useEffect(() => {
+    setChatList(chats);
+  }, [chats]);
 
   // Refresh sidebar chat list whenever a message is successfully sent
   // This is how sidebar titles update after the first message sets the title
