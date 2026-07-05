@@ -137,10 +137,11 @@ export async function POST(req) {
 
       if (videos.length === 0) {
         reply = reply
-          .replace(/(?:video\s+(?:dekh|check)\s+kar\s+lena\s*,?\s*(?:aur\s+)?(?:channel\s+ko\s+)?subscribe\s+karna\s+mat\s+bhoolna[.!]?)/gi, "")
-          .replace(/(?:video\s+(?:dekh|check)\s+kar\s+lena[.!]?)/gi, "")
+          .replace(/(?:video\s+(?:dekh|check)\s+(?:kar\s+)?lena\s*,?\s*(?:aur\s+)?(?:channel\s+ko\s+)?subscribe\s+karna\s+mat\s+bhoolna[.!]?)/gi, "")
+          .replace(/(?:video\s+(?:dekh|check)\s+(?:kar\s+)?lena[.!]?)/gi, "")
           .replace(/(?:channel\s+ko\s+)?subscribe\s+karna\s+mat\s+bhoolna[.!]?/gi, "")
-          .replace(/,\s*$/g, "")
+          .replace(/^[.,\s]+/g, "")
+          .replace(/[.,\s]+$/g, "")
           .trim();
       }
     }
